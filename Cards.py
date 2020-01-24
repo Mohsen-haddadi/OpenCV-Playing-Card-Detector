@@ -106,6 +106,12 @@ def load_suits(filepath):
 def preprocess_image(image):
     """Returns a grayed, blurred, and adaptively thresholded camera image."""
 
+    # Mohsen: BKG_THRESH was not globaled. So i repeat BKG_THRESH = 60 inside the function
+    BKG_THRESH = 60
+
+    # Mohsen: use full path while loading image to prevent cvtColor Error
+    # Mohsen: Example: img = cv2.imread('C:/Users/Financial/Desktop/1.jpg')
+    # Mohsen: check: https://stackoverflow.com/questions/30506126/open-cv-error-215-scn-3-scn-4-in-function-cvtcolor 
     gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray,(5,5),0)
 
@@ -118,8 +124,8 @@ def preprocess_image(image):
     # A background pixel in the center top of the image is sampled to determine
     # its intensity. The adaptive threshold is set at 50 (THRESH_ADDER) higher
     # than that. This allows the threshold to adapt to the lighting conditions.
-    img_w, img_h = np.shape(image)[:2]
-    bkg_level = gray[int(img_h/100)][int(img_w/2)]
+    img_w, img_h = np.shape(image)[:2] # Mohsen: or img_w, img_h = image.shape[:2]
+    bkg_level = gray[int(img_h/100)][int(img_w/2)] # Mohsen: or a number 0 to 255
     thresh_level = bkg_level + BKG_THRESH
 
     retval, thresh = cv2.threshold(blur,thresh_level,255,cv2.THRESH_BINARY)
