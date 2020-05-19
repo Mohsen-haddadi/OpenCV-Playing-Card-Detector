@@ -1,0 +1,1 @@
+works only for "testing images/real1.jpg" photo sofar.
