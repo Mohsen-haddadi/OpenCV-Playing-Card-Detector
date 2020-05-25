@@ -106,9 +106,6 @@ def load_suits(filepath):
 def preprocess_image(image):
     """Returns a grayed, blurred, and adaptively thresholded camera image."""
 
-    # Mohsen: BKG_THRESH was not globaled. So i repeat BKG_THRESH = 60 inside the function
-    BKG_THRESH = 60
-
     # Mohsen: use full path while loading image to prevent cvtColor Error
     # Mohsen: Example: img = cv2.imread('C:/Users/Financial/Desktop/1.jpg')
     # Mohsen: (new note) using full path is not nessasry, i must have not copy images in the current directory.
@@ -285,6 +282,9 @@ def match_card(qCard, train_ranks, train_suits):
                     best_suit_match_diff = suit_diff
                     best_suit_name = Tsuit.name
 
+    cv2.imshow("image", best_rank_diff_img)
+    cv2.imshow("image", best_suit_diff_img)
+    print("best_rank_match_diff is:",best_rank_match_diff)
     # Combine best rank match and best suit match to get query card's identity.
     # If the best matches have too high of a difference value, card identity
     # is still Unknown
