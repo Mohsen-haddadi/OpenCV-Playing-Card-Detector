@@ -6,19 +6,20 @@ import match_card
 def download_my_card(my_seat , xth_card):
     """
     Use specific top left corner pixel of a card to set card region. 
+    The width and height of image should be lo
     """
     #global my_1th_card_region, my_2th_card_region
     #load_variables()
-    my_1th_card_region = { 1:(GAME_POISTION[0]+369, GAME_POISTION[1]+391, 10, 30) ,
-                           2:(GAME_POISTION[0]+115, GAME_POISTION[1]+393, 10, 30) ,
-                           3:(GAME_POISTION[0]-140, GAME_POISTION[1]+390, 10, 30) ,
-                           4:(GAME_POISTION[0]-171, GAME_POISTION[1]+85, 10, 30) ,
-                           5:(GAME_POISTION[0]+399, GAME_POISTION[1]+85, 10, 30) }
-    my_2th_card_region = { 1:(GAME_POISTION[0]+388, GAME_POISTION[1]+391, 10, 30) ,
-                           2:(GAME_POISTION[0]+133, GAME_POISTION[1]+393, 10, 30) ,
-                           3:(GAME_POISTION[0]-122, GAME_POISTION[1]+390, 10, 30) ,
-                           4:(GAME_POISTION[0]-152, GAME_POISTION[1]+85, 10, 30) ,
-                           5:(GAME_POISTION[0]+418, GAME_POISTION[1]+85, 10, 30) }
+    my_1th_card_region = { 1:(GAME_POSITION[0]+369, GAME_POSITION[1]+391, 10, 30) ,
+                           2:(GAME_POSITION[0]+115, GAME_POSITION[1]+393, 10, 30) ,
+                           3:(GAME_POSITION[0]-140, GAME_POSITION[1]+390, 10, 30) ,
+                           4:(GAME_POSITION[0]-171, GAME_POSITION[1]+85, 10, 30) ,
+                           5:(GAME_POSITION[0]+399, GAME_POSITION[1]+85, 10, 30) }
+    my_2th_card_region = { 1:(GAME_POSITION[0]+388, GAME_POSITION[1]+391, 10, 30) ,
+                           2:(GAME_POSITION[0]+133, GAME_POSITION[1]+393, 10, 30) ,
+                           3:(GAME_POSITION[0]-122, GAME_POSITION[1]+390, 10, 30) ,
+                           4:(GAME_POSITION[0]-152, GAME_POSITION[1]+85, 10, 30) ,
+                           5:(GAME_POSITION[0]+418, GAME_POSITION[1]+85, 10, 30) }
     if xth_card == 1:
         pyautogui.screenshot("image.png" , my_1th_card_region[my_seat] )
     elif xth_card == 2:
@@ -34,11 +35,11 @@ def download_table_card(xth_card):
     """
     #global table_card_region
     #load_variables()
-    table_card_region = { 1:(GAME_POISTION[0]-38, GAME_POISTION[1]+215, 20, 40) , 
-                          2:(GAME_POISTION[0]+25, GAME_POISTION[1]+215, 20, 40) ,
-                          3:(GAME_POISTION[0]+87, GAME_POISTION[1]+215, 20, 40) ,
-                          4:(GAME_POISTION[0]+150, GAME_POISTION[1]+215, 20, 40) ,
-                          5:(GAME_POISTION[0]+212, GAME_POISTION[1]+215, 20, 40) }
+    table_card_region = { 1:(GAME_POSITION[0]-38, GAME_POSITION[1]+215, 20, 40) , 
+                          2:(GAME_POSITION[0]+25, GAME_POSITION[1]+215, 20, 40) ,
+                          3:(GAME_POSITION[0]+87, GAME_POSITION[1]+215, 20, 40) ,
+                          4:(GAME_POSITION[0]+150, GAME_POSITION[1]+215, 20, 40) ,
+                          5:(GAME_POSITION[0]+212, GAME_POSITION[1]+215, 20, 40) }
 
     pyautogui.screenshot("image.png" , table_card_region[xth_card] )
     query_image = cv2.imread("image.png")
@@ -92,18 +93,29 @@ def read_river_card():
     return river_card[:2]
 
 
+def find_game_reference_point_for_testing():
+    global GAME_POSITION
+
+    print('searching for game region on screen...')
+    GAME_POSITION = pyautogui.locateOnScreen('reference image for celeb game.png')
+    if GAME_POSITION == None:
+        raise Exception("can not find game region on screen")
+    else:
+        print('game reference point is set')
+
 def test():
-    my_1th_card, my_2th_card = read_my_cards(1)
+    find_game_reference_point_for_testing()
+    #my_1th_card, my_2th_card = read_my_cards(1)
     table_1th_card, table_2th_card, table_3th_card = read_flop_cards()
     table_4th_card = read_turn_card()
     table_5th_card = read_river_card()
 
-    print('my cards are:%s , %s'%(my_1th_card, my_2th_card))
+    #print('my cards are:%s , %s'%(my_1th_card, my_2th_card))
     print('table cards are:%s, %s, %s, %s, %s'
           %(table_1th_card, table_2th_card, table_3th_card, table_4th_card, table_5th_card))
 
 if __name__ == '__main__':
-    pass
-    #test()
+    #pass
+    test()
 
 

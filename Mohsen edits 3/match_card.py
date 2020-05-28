@@ -2,22 +2,15 @@ import time, cv2, os
 import numpy as np
 import pyautogui
 
-#Global constant below are used in create_source_cards() and pre_process_query_image() functions.
-#These COORDINATES should be same for both source cards and query cards to get the best match card result.
+#Global constant below are used in create_source_cards() (at create_source_cards.py module)
+#and pre_process_query_image() functions.
+#These COORDINATES should be same for both source cards and query cards to reach the best match card result.
 #ZOOM constant must be the same for both source cards and query cards.
 TABLE_CARD_VALUE_COORDINATE=(3,23,0,20)
 TABLE_CARD_SUIT_COORDINATE=(25,40,3,20)
 MY_CARD_VALUE_COORDINATE=(3,23,0,20)
 MY_CARD_SUIT_COORDINATE=(25,40,3,20)
 ZOOM = 4
-
-def create_source_cards_directory():
-    directories = ['Source Card Images for Celeb/Table Cards', 'Source Card Images for Celeb/My Cards'
-                  ,'Cards to Create Source Card Images/First Table Cards'
-                  ,'Cards to Create Source Card Images/My First Cards From First Seat' ]
-    for directory in directories:
-        if not os.path.exists( directory ):
-            os.makedirs( directory )
 
 def create_source_cards(create_table_cards = True ):
     """ 
@@ -44,6 +37,8 @@ def create_source_cards(create_table_cards = True ):
             else :
                 y0, y1, x0, x1 = MY_CARD_SUIT_COORDINATE
         
+        if isinstance(image, type(None)):
+            raise Exception("Unable to read %s.png image" %name)
         gray_image = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
         #blur operation is removed
         croped_image = gray_image[y0:y1,x0:x1]
@@ -60,7 +55,7 @@ def create_source_cards(create_table_cards = True ):
         elif create_table_cards == False :
             cv2.imwrite('Source Card Images for Celeb/My Cards test1/%s.png' %name, final_image)
 
-def download_card_testing(COORDINATES ='not set yet'):
+def download_card_for_testing(COORDINATES ='not set yet'):
     """
     Use specific top left corner pixel of a card to set card COORDINATES. 
     Set table card COORDINATES the same height. 
@@ -179,6 +174,8 @@ def match_card(value_image, suit_image, is_it_table_card, VALUE_DIFFERENCE_LIMIT
         elif is_it_table_card == False:
             value_source_image = cv2.imread("Source Card Images for Celeb/My Cards/%s.png"%value_name, cv2.IMREAD_GRAYSCALE)
 
+        if isinstance(value_source_image, type(None)):
+            raise Exception("Unable to read %s.png value source image" %value_name)
         difference_image = cv2.absdiff(value_image, value_source_image)
         difference_amount = int(np.sum(difference_image)/255)
 
@@ -193,6 +190,9 @@ def match_card(value_image, suit_image, is_it_table_card, VALUE_DIFFERENCE_LIMIT
             suit_source_image = cv2.imread("Source Card Images for Celeb/Table Cards/%s.png"%suit_name, cv2.IMREAD_GRAYSCALE)
         elif is_it_table_card == False:
             suit_source_image = cv2.imread("Source Card Images for Celeb/My Cards/%s.png"%suit_name, cv2.IMREAD_GRAYSCALE)
+
+        if isinstance(suit_source_image, type(None)):
+            raise Exception("Unable to read %s.png suit source image" %suit_name)
         difference_image = cv2.absdiff(suit_image, suit_source_image)
         difference_amount = int(np.sum(difference_image)/255)
 
@@ -215,7 +215,7 @@ def test():
     from source image by modifying screenshot coordinate or
     croping coordinates of suit and value of the query card.
     """
-    query_image = download_card_testing(COORDINATES = 'modify screenshot coordinate here')
+    query_image = download_card_for_testing(COORDINATES = 'modify screenshot coordinate here')
     value_image, suit_image = pre_process_query_image(query_image, True)
     result = match_floating_card(value_image, suit_image, True)
     print(result)
