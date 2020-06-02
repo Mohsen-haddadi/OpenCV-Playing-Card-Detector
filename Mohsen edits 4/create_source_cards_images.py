@@ -4,14 +4,31 @@ import numpy as np, cv2
 import pyautogui
 
 """
-1. Global constant below are used in create_source_cards() and
-pre_process_query_image() (at match_card.py module) functions.
-2. COORDINATE format is: TABLE_CARD_VALUE_COORDINATE = (y0,y1,x0,x1)
-#3. The height (y1-y0) and wide (x1-x0) of COORDINATES must be same for both source cards (which is made by create_source_cards())
-#and query cards (which is ), Otherwise it will Errors.
-#4. The x0 and y0 of COORDINATES should be same for both source cards (which is made by create_source_cards())
-#and query cards to reach the best match card result.
-5. ZOOM constant must be the same for both source cards and query cards.
+1.1. Set these constants the same between create_source_cards_images.py and match_card.py:
+TABLE_CARD_VALUE_COORDINATE, TABLE_CARD_SUIT_COORDINATE, 
+MY_CARD_VALUE_COORDINATE, MY_CARD_SUIT_COORDINATE, ZOOM
+
+1.2. Functions they are used: 
+create_source_cards_images.create_source_cards() 
+and match_card.pre_process_query_image()
+
+1.3. COORDINATE format is: TABLE_CARD_VALUE_COORDINATE = (y0,y1,x0,x1)
+
+1.4. The height (y1-y0) and width (x1-x0) of COORDINATES must be same for both source cards 
+(which is made by create_source_cards()) and query cards 
+(which is used on pre_process_query_image()), Otherwise it will Errors.
+
+1.5. The x0 and y0 of COORDINATES should be same for both source cards 
+and query cards to reach the best match card result.
+
+1.6. ZOOM constant must be the same for both source cards and query cards.
+
+2.1. Set these constants the same between create_source_cards_images.py and read_cards.py:
+my_1th_card_region, my_2th_card_region, and table_card_region
+
+2.2. Functions they are used: 
+create_source_cards_images.crop_raw_card_image() 
+and read_card.download_my_card() read_card.download_table_card()
 """
 TABLE_CARD_VALUE_COORDINATE=(3,23,0,20)
 TABLE_CARD_SUIT_COORDINATE=(25,40,3,20)
@@ -36,29 +53,31 @@ def crop_raw_card_image(create_table_cards = True):
     croping 14(+4 suits) card from my 1th card position on first seat.
     Note 1: Before runing this function, first fill 'Raw Images/First Table Cards Raw Images' 
     and 'Raw Images/My First Cards From First Seat Raw Images' directories with 
-    16 Sample cards (12 value cards + 4 suit cards).
+    17 Sample cards (13 value cards + 4 suit cards).
     Note 2: Variables table_card_region and my_1th_card_region should contain 
     same coordinates used in read_card file too!
     """
+    #global table_card_region, my_1th_card_region
+    #load_variables()
 
     #for name in ['Ace','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Jack','Queen','King',
     #             'Spade','Heart','Club','Diamond']:
     for name in ['Ace','Two','Four','Seven','Nine','King',
                  'Spade','Heart','Club','Diamond']:  
 
-        game_position = find_game_reference_point_from_image_file(name)
-        if game_position == None:
+        GAME_POSITION = find_game_reference_point_from_image_file(name)
+        if GAME_POSITION == None:
             continue
-        table_card_region = { 1:(game_position[0]-38, game_position[1]+215, 20, 40) , 
-                              2:(game_position[0]+25, game_position[1]+215, 20, 40) ,
-                              3:(game_position[0]+87, game_position[1]+215, 20, 40) ,
-                              4:(game_position[0]+150, game_position[1]+215, 20, 40) ,
-                              5:(game_position[0]+212, game_position[1]+215, 20, 40) }
-        my_1th_card_region = { 1:(game_position[0]+369, game_position[1]+391, 10, 30) ,
-                               2:(game_position[0]+115, game_position[1]+393, 10, 30) ,
-                               3:(game_position[0]-140, game_position[1]+390, 10, 30) ,
-                               4:(game_position[0]-171, game_position[1]+85, 10, 30) ,
-                               5:(game_position[0]+399, game_position[1]+85, 10, 30) }
+        table_card_region = { 1:(GAME_POSITION[0]-38, GAME_POSITION[1]+215, 20, 40) , 
+                              2:(GAME_POSITION[0]+25, GAME_POSITION[1]+215, 20, 40) ,
+                              3:(GAME_POSITION[0]+87, GAME_POSITION[1]+215, 20, 40) ,
+                              4:(GAME_POSITION[0]+150, GAME_POSITION[1]+215, 20, 40) ,
+                              5:(GAME_POSITION[0]+212, GAME_POSITION[1]+215, 20, 40) }
+        my_1th_card_region = { 1:(GAME_POSITION[0]+369, GAME_POSITION[1]+391, 10, 30) ,
+                               2:(GAME_POSITION[0]+115, GAME_POSITION[1]+393, 10, 30) ,
+                               3:(GAME_POSITION[0]-140, GAME_POSITION[1]+390, 10, 30) ,
+                               4:(GAME_POSITION[0]-171, GAME_POSITION[1]+85, 10, 30) ,
+                               5:(GAME_POSITION[0]+399, GAME_POSITION[1]+85, 10, 30) }
 
         if create_table_cards == True:
             image = cv2.imread("Raw Images/First Table Cards Raw Images/%s.png" %name )
@@ -90,6 +109,9 @@ def create_source_cards(create_table_cards = True ):
     and 'Raw Images/My First Cards From First Seat' directories.
     Note 2: Use the same screenshoted query cards with the same screenshot coordinates to fill Sample cards.
     """
+    #global TABLE_CARD_VALUE_COORDINATE, TABLE_CARD_SUIT_COORDINATE,\
+    # MY_CARD_VALUE_COORDINATE, MY_CARD_SUIT_COORDINATE, ZOOM
+    #load_variables()
 
     #for name in ['Ace','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Jack','Queen','King',
     #             'Spade','Heart','Club','Diamond'] :
@@ -125,15 +147,14 @@ def create_source_cards(create_table_cards = True ):
         elif create_table_cards == False :
             cv2.imwrite('Source Card Images for Celeb/My Cards/%s.png' %name, final_image)
 
-
 def find_game_reference_point_from_image_file(file_name):
     """
     https://stackoverflow.com/questions/38473952/find-location-of-image-inside-bigger-image
-    it will set game_position to (x,y) position
+    it will set GAME_POSITION to (x,y) position
     there is no need to open image on top screen to sreen shot from it.
     """
     t0 = time.time()
-    here = Image.open(r"reference image for celeb game.png")
+    here = Image.open(r"reference image.png")
     big  = Image.open(r"Raw Images/First Table Cards Raw Images/%s.png" %file_name)
 
     herear = np.asarray(here)
@@ -155,8 +176,8 @@ def find_game_reference_point_from_image_file(file_name):
             if test.all():
                 print("game reference point for image '%s' is founded"%file_name)
                 #print(time.time()-t0)
-                game_position = (x,y)
-                return game_position
+                GAME_POSITION = (x,y)
+                return GAME_POSITION
     print("###Unable to find game reference point for image file %s###"%file_name)
     return None
 """
@@ -167,7 +188,7 @@ def find_game_reference_point_from_image_file():
     global GAME_POSITION
     t0 = time.time()
     image = cv2.imread("Raw Images/First Table Cards Raw Images/%s.png" %'Nine')  
-    template = cv2.imread("a1.png")  
+    template = cv2.imread("reference image.png")  
     result = cv2.matchTemplate(image,template,cv2.TM_CCOEFF_NORMED)  
     print(result)
     print(result.argmax())
