@@ -24,7 +24,7 @@ and query cards to reach the best match card result.
 """
 
 TABLE_CARD_VALUE_COORDINATE=(3,23,0,20) #80x80
-TABLE_CARD_SUIT_COORDINATE=(25,40,3,20) #80x80
+TABLE_CARD_SUIT_COORDINATE=(25,40,3,20) #68x60
 MY_CARD_VALUE_COORDINATE=(0,20,0,10) #40x80
 MY_CARD_SUIT_COORDINATE=(20,35,0,10) #40x60
 ZOOM = 4
@@ -179,34 +179,30 @@ def match_card(value_image, suit_image, is_it_table_card, VALUE_DIFFERENCE_LIMIT
 
 
 #Excesses functions to run testing:
-def download_card_for_testing(COORDINATES ='not set yet'):
-    """
-    Use specific top left corner pixel of a card to set card COORDINATES. 
-    Set table card COORDINATES the same height. 
-    """
-    #global coordinates
-    #load_variables()
-
-    query_image_name = "Eight spade 5th"
-    query_image = cv2.imread("Cards to Create Source Card Images/First Table Cards/%s.png" %query_image_name)
-    if isinstance(query_image, type(None)):
-        raise Exception("Unable to read %s.png image" %query_image_name)
-    return query_image
-
 def test():
     """
     Run test function to adjust deviation of screenshoted query image
     from source image by modifying screenshot coordinate or
     croping coordinates of suit and value of the query card.
     """
-    query_image = download_card_for_testing(COORDINATES = 'modify screenshot coordinate here')
+
+    def download_cropped_card_for_testing():
+        """
+        Use specific top left corner pixel of a card to set card COORDINATES. 
+        """
+        query_image_name = "Ace"
+        query_image = cv2.imread("Raw Images/First Table Cards/%s.png" %query_image_name)
+        if isinstance(query_image, type(None)):
+            raise Exception("Unable to read %s.png image" %query_image_name)
+        return query_image
+
+    query_image = download_cropped_card_for_testing()
     value_image, suit_image = pre_process_query_image(query_image, True)
     result = match_floating_card(value_image, suit_image, True)
     print(result)
 
 if __name__ == '__main__':
-    #create_source_cards_directory()
-    #create_source_cards()
+
     test()
 
 

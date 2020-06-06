@@ -109,28 +109,74 @@ def read_river_card():
 
 
 #Excesses functions to run testing:
-def find_game_reference_point_for_testing():
-    global GAME_POSITION
 
-    print('searching for game region on screen...')
-    GAME_POSITION = pyautogui.locateOnScreen('reference image.png')
-    if GAME_POSITION == None:
-        raise Exception("can not find game region on screen")
-    else:
-        print('game reference point is set')
+def test(my_seat):
+    """
+    Before start testing, put a poker game table on top of your monitor screen. 
+    Tests card reading functionality, and shows the screen shot cards from
+    screen to make sure that pre_process_query_image() function works fine
+    and coordinates like: TABLE_CARD_VALUE_COORDINATE,...
+    ,table_card_region are set correctly.
+    """
 
-def test():
+    def find_game_reference_point_for_testing():
+        global GAME_POSITION
+
+        print('searching for game region on screen...')
+        GAME_POSITION = pyautogui.locateOnScreen('reference image.png')
+        if GAME_POSITION == None:
+            raise Exception("can not find game region on screen")
+        else:
+            print('game reference point is set')
+
+    def show_my_pre_process_card_images(my_seat):
+        for xth_card in [1,2]:    
+            query_image = download_my_card(my_seat , xth_card)
+            value_image, suit_image = match_card.pre_process_query_image(query_image, False)
+            print('My %sth card value image' %xth_card)
+            cv2.imshow('My %sth card value image' %xth_card, value_image)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+            print('My %sth card suit image' %xth_card)
+            cv2.imshow('My %sth card suit image' %xth_card, suit_image)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+            #cv2.imwrite('My %sth card screenshot value_image.png' %xth_card, value_image)
+            #cv2.imwrite('My %sth card screenshot suit_image.png' %xth_card, suit_image)
+
+    def show_table_pre_process_card_images():
+        for xth_card in [1,2,3,4,5]:    
+            query_image = download_table_card(xth_card)
+            value_image, suit_image = match_card.pre_process_query_image(query_image, True)
+            print('Table %sth card value image' %xth_card)
+            cv2.imshow('Table %sth card value image' %xth_card, value_image)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+            print('Table %sth card suit image' %xth_card)
+            cv2.imshow('Table %sth card suit image' %xth_card, suit_image)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+            #cv2.imwrite('Table %sth card screenshot value_image.png' %xth_card, value_image)
+            #cv2.imwrite('Table %sth card screenshot suit_image.png' %xth_card, suit_image)
+
     find_game_reference_point_for_testing()
-    my_1th_card, my_2th_card = read_my_cards(1)
-    #table_1th_card, table_2th_card, table_3th_card = read_flop_cards()
-    #table_4th_card = read_turn_card()
-    #table_5th_card = read_river_card()
+
+    my_1th_card, my_2th_card = read_my_cards(my_seat)
+    table_1th_card, table_2th_card, table_3th_card = read_flop_cards()
+    table_4th_card = read_turn_card()
+    table_5th_card = read_river_card()
 
     print('my cards are:%s , %s'%(my_1th_card, my_2th_card))
-    #print('table cards are:%s, %s, %s, %s, %s'
-    #      %(table_1th_card, table_2th_card, table_3th_card, table_4th_card, table_5th_card))
+    print('table cards are:%s, %s, %s, %s, %s'
+    %(table_1th_card, table_2th_card, table_3th_card, table_4th_card, table_5th_card))
 
+    show_my_pre_process_card_images(my_seat)
+    show_table_pre_process_card_images()
+
+    for xth_card in [1,2,3]:    
+        query_image = download_table_card(xth_card)
+        value_image, suit_image = match_card.pre_process_query_image(query_image, True)
+        
 if __name__ == '__main__':
-    test()
-
+    test(1)
 

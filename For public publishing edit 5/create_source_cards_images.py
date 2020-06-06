@@ -60,10 +60,8 @@ def crop_raw_card_image(create_table_cards = True):
     #global table_card_region, my_1th_card_region
     #load_variables()
 
-    #for name in ['Ace','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Jack','Queen','King',
-    #             'Spade','Heart','Club','Diamond']:
-    for name in ['Ace','Two','Four','Seven','Nine','King',
-                 'Spade','Heart','Club','Diamond']:  
+    for name in ['Ace','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Jack','Queen','King',
+                 'Spade','Heart','Club','Diamond']: 
 
         GAME_POSITION = find_game_reference_point_from_image_file(name)
         if GAME_POSITION == None:
@@ -116,8 +114,6 @@ def create_source_cards(create_table_cards = True ):
 
     for name in ['Ace','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Jack','Queen','King',
                  'Spade','Heart','Club','Diamond'] :
-    #for name in ['Ace','Two','Four','Seven','Nine','King',
-    #             'Spade','Heart','Club','Diamond']: 
         if create_table_cards == True:
             image = cv2.imread("Raw Images/First Table Cards/%s.png" %name)
             if name not in ('Spade','Heart','Club','Diamond'):
@@ -202,8 +198,8 @@ def main():
     
     crop_raw_card_image()
     create_source_cards()
-    #crop_raw_card_image(create_table_cards = False)
-    #create_source_cards(create_table_cards = False)
+    crop_raw_card_image(create_table_cards = False)
+    create_source_cards(create_table_cards = False)
 
 if __name__ == '__main__':
 	main()
